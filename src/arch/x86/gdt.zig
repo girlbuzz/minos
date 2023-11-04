@@ -36,7 +36,7 @@ const GDTDescriptor = packed struct {
 };
 
 const gdtd = GDTDescriptor{
-    .size = @sizeOf(@TypeOf(gdt)),
+    .size = @sizeOf(@TypeOf(gdt)) - 1,
     .offset = &gdt,
 };
 

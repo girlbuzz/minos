@@ -9,28 +9,37 @@ fn init() void {
     gdt.initGDT();
 }
 
+pub fn outb(port: u16, byte: u8) void {
+    asm volatile ("outb %[byte], %[port]"
+        :
+        : [port] "{dx}" (port),
+          [byte] "{al}" (byte),
+    );
+}
+
+pub fn outbMany(port: u16, bytes: []const u8) void {
+    for (bytes) |byte| {
+        outb(port, byte);
+    }
+}
+
 pub fn hlt() noreturn {
     asm volatile ("hlt");
     unreachable;
 }
 
 export fn start() void {
-    var magic: u32 = undefined;
-    var ptr: u32 = undefined;
+    var magic: u32 = 69420;
+    var ptr: u32 = 42069;
 
     asm volatile ("mov %%eax, %[magic]"
-        : [magic] "=r" (magic),
+        : [magic] "=m" (magic),
     );
 
     asm volatile ("mov %%ebx, %[ptr]"
-        : [ptr] "=r" (ptr),
+        : [ptr] "=m" (ptr),
     );
-
-    if (magic != 0xe85250d6) {
-        @panic("magic number is incorrect.");
-    }
 
     init();
     @import("root").main();
-    @panic("`main` returned.");
 }

@@ -3,17 +3,18 @@
 pub const cpu = @import("arch.zig").cpu;
 pub const panic = @import("panic.zig").panic;
 
+const serial = @import("drivers/serial.zig");
+
 comptime {
     // zig is lazy so in order to ensure `start` gets exported
     // i have to make sure it gets evaluated
     _ = cpu;
 }
 
-const vgamem: [*]u8 = @ptrFromInt(0xb8000);
+pub fn main() noreturn {
+    const writer = serial.getCom1();
 
-pub fn main() void {
-    vgamem[0] = 'H';
-    vgamem[1] = 0b01110000;
-    vgamem[2] = 'i';
-    vgamem[3] = 0b01110000;
+    try writer.print("Hello, {s}!\n", .{"minos"});
+
+    cpu.hlt();
 }
