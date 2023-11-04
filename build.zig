@@ -6,8 +6,15 @@ const CrossTarget = std.zig.CrossTarget;
 pub fn build(b: *Builder) void {
     const cpu = b.option(Target.Cpu.Arch, "arch", "the cpu architecture to build the kernel for");
 
+    var model: CrossTarget.CpuModel = .native;
+
+    if (cpu) |c| {
+        model = .{ .explicit = Target.Cpu.Model.generic(c) };
+    }
+
     const target: CrossTarget = .{
         .cpu_arch = cpu,
+	.cpu_model = model,
         .ofmt = .elf,
         .os_tag = .freestanding,
         .abi = .none
