@@ -13,14 +13,14 @@ kernel: zig-out/bin/kernel.elf
 zig-out/bin/kernel.elf:
 	zig build $(ZIGFLAGS) -Darch=$(ARCH)
 
-iso/boot/kernel.bin: zig-out/bin/kernel.elf
+iso/boot/kernel.elf: zig-out/bin/kernel.elf
 	cp zig-out/bin/kernel.elf $@
 
-minos.iso: iso/boot/kernel.bin
+minos.iso: iso/boot/kernel.elf
 	grub-mkrescue $(GRUBFLAGS) iso -o $@
 
 run: minos.iso
 	qemu-system-$(ARCH) $(QEMUFLAGS) -cdrom minos.iso
 
 clean:
-	rm -rf iso/boot/kernel.bin minos.iso zig-out/ zig-cache/
+	rm -rf iso/boot/kernel.elf minos.iso zig-out/ zig-cache/

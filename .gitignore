@@ -1,0 +1,4 @@
+zig-out/
+zig-cache/
+iso/boot/kernel.elf
+kernel.elf
