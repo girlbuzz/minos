@@ -2,3 +2,4 @@ zig-out/
 zig-cache/
 iso/boot/kernel.elf
 kernel.elf
+minos.iso
