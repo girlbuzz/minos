@@ -5,10 +5,6 @@ comptime {
     _ = multiboot;
 }
 
-fn init() void {
-    gdt.initGDT();
-}
-
 pub fn outb(port: u16, byte: u8) void {
     asm volatile ("outb %[byte], %[port]"
         :
@@ -29,17 +25,11 @@ pub fn hlt() noreturn {
 }
 
 export fn start() void {
-    var magic: u32 = 69420;
-    var ptr: u32 = 42069;
+    asm volatile ("cli");
 
-    asm volatile ("mov %%eax, %[magic]"
-        : [magic] "=m" (magic),
-    );
+    gdt.setGdt(@sizeOf(@TypeOf(gdt.gdt)) - 1, @intFromPtr(&gdt.gdt));
+    gdt.reloadSegments();
 
-    asm volatile ("mov %%ebx, %[ptr]"
-        : [ptr] "=m" (ptr),
-    );
-
-    init();
     @import("root").main();
+    hlt();
 }
